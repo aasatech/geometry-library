@@ -71,6 +71,9 @@ function enc(v) {
   return result;
 }
 class PolyUtil {
+  static get DEFAULT_TOLERANCE() {
+    return DEFAULT_TOLERANCE;
+  }
   /**
    * Returns tan(latitude-at-lng3) on the great circle (lat1, lng1) to (lat2, lng2). lng1==0.
    * See http://williams.best.vwh.net/avform.htm .
