@@ -241,18 +241,17 @@ class PolyUtil {
     if (size == 0) {
       return false;
     }
-
     let tolerance = toleranceEarth / MathUtil.EARTH_RADIUS;
     let havTolerance = MathUtil.hav(tolerance);
     let lat3 = deg2rad(point["lat"]);
     let lng3 = deg2rad(point["lng"]);
     let prev = !isEmpty(closed) ? poly[size - 1] : 0;
-
     let lat1 = deg2rad(prev["lat"]);
     let lng1 = deg2rad(prev["lng"]);
 
     if (geodesic) {
-      poly.forEach(val => {
+      for (let i in poly) {
+        const val = poly[i];
         let lat2 = deg2rad(val["lat"]);
         let lng2 = deg2rad(val["lng"]);
         if (
@@ -270,7 +269,7 @@ class PolyUtil {
         }
         lat1 = lat2;
         lng1 = lng2;
-      });
+      }
     } else {
       // We project the points to mercator space, where the Rhumb segment is a straight line,
       // and compute the geodesic distance between point3 and the closest point on the
@@ -282,7 +281,9 @@ class PolyUtil {
       let y1 = MathUtil.mercator(lat1);
       let y3 = MathUtil.mercator(lat3);
       let xTry = [];
-      poly.forEach(val => {
+
+      for (let i in poly) {
+        let val = poly[i];
         let lat2 = deg2rad(val["lat"]);
         let y2 = MathUtil.mercator(lat2);
         let lng2 = deg2rad(val["lng"]);
@@ -298,7 +299,8 @@ class PolyUtil {
           xTry[1] = x3Base + 2 * Math.PI;
           xTry[2] = x3Base - 2 * Math.PI;
 
-          xTry.forEach(x3 => {
+          for (let i in xTry) {
+            let x3 = xTry[i];
             let dy = y2 - y1;
             let len2 = x2 * x2 + dy * dy;
             let t =
@@ -312,12 +314,12 @@ class PolyUtil {
             if (havDist < havTolerance) {
               return true;
             }
-          });
+          }
         }
         lat1 = lat2;
         lng1 = lng2;
         y1 = y2;
-      });
+      }
     }
     return false;
   }
@@ -381,6 +383,47 @@ class PolyUtil {
     );
     return sinSumAlongTrack > 0; // Compare with half-circle == PI using sign of sin().
   }
+
+  // static isOnSegmentGC(lat1, lng1, lat2, lng2, lat3, lng3, havTolerance) {
+  //   const havDist13 = MathUtil.havDistance(lat1, lat3, lng1 - lng3);
+  //   if (havDist13 <= havTolerance) {
+  //     return true;
+  //   }
+  //   const havDist23 = MathUtil.havDistance(lat2, lat3, lng2 - lng3);
+  //   if (havDist23 <= havTolerance) {
+  //     return true;
+  //   }
+  //
+  //   const sinBearing = PolyUtil.sinDeltaBearing(
+  //     lat1,
+  //     lng1,
+  //     lat2,
+  //     lng2,
+  //     lat3,
+  //     lng3
+  //   );
+  //   const sinDist13 = MathUtil.sinFromHav(havDist13);
+  //   const havCrossTrack = MathUtil.havFromSin(sinDist13 * sinBearing);
+  //   if (havCrossTrack > havTolerance) {
+  //     return false;
+  //   }
+  //   const havDist12 = MathUtil.havDistance(lat1, lat2, lng1 - lng2);
+  //   const term = havDist12 + havCrossTrack * (1 - 2 * havDist12);
+  //   if (havDist13 > term || havDist23 > term) {
+  //     return false;
+  //   }
+  //   if (havDist12 < 0.74) {
+  //     return true;
+  //   }
+  //   const cosCrossTrack = 1 - 2 * havCrossTrack;
+  //   const havAlongTrack13 = (havDist13 - havCrossTrack) / cosCrossTrack;
+  //   const havAlongTrack23 = (havDist23 - havCrossTrack) / cosCrossTrack;
+  //   const sinSumAlongTrack = MathUtil.sinSumFromHav(
+  //     havAlongTrack13,
+  //     havAlongTrack23
+  //   );
+  //   return sinSumAlongTrack > 0; // Compare with half-circle == PI using sign of sin().
+  // }
 
   /**
    * Computes the distance on the sphere between the point p and the line segment start to end.
