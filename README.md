@@ -259,7 +259,7 @@ Returns string
 
 ```php
 
-response =  \GeometryLibrary\PolyUtil::encode(
+response =  PolyUtil.encode(
               [
                 {'lat': 38.5, 'lng': -120.2},
                 {'lat': 40.7, 'lng': -120.95},
@@ -352,7 +352,7 @@ Returns array
 
 response =  SphericalUtil.interpolate({'lat': 25.775, 'lng': -80.190}, {'lat':26.215, 'lng': -81.218}, 2);
 
-console.log(response);
+console.log(response); 
 /**
     {
       'lat': 26.647635362403,
