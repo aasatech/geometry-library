@@ -238,13 +238,13 @@ Returns array
 const response = PolyUtil.decode('_p~iF~ps|U_ulLnnqC_mqNvxq`@');  
 
 console.log(response);
-/**
+/*
   [ { lat: 38.5, lng: -120.2 },
     { lat: 40.7, lng: -120.95 },
     { lat: 43.252, lng: -126.45300000000002 }
   ]
 
-**/
+*/
 
 ```
 ---
@@ -305,12 +305,12 @@ response =  SphericalUtil.computeOffset({'lat': 25.775, 'lng': -80.190}, 152, 12
 
 console.log(response);
 
-/**
+/*
   {
     'lat': 25.774316510639,
     'lng': -80.188685385944
   }
-**/
+*/
 
 ```
 ---
@@ -329,7 +329,7 @@ Returns array
 response =  SphericalUtil.computeOffsetOrigin({'lat': 25.775, 'lng': -80.190}, 152, 120);
 
 console.log(response);
-/**
+/*
   {
     'lat': 14.33435503928,
     'lng': -263248.24242931
@@ -353,12 +353,12 @@ Returns array
 response =  SphericalUtil.interpolate({'lat': 25.775, 'lng': -80.190}, {'lat':26.215, 'lng': -81.218}, 2);
 
 console.log(response); 
-/**
+/*
     {
       'lat': 26.647635362403,
       'lng': -82.253737943391
     }
-**/
+*/
 
 ```
 ---
