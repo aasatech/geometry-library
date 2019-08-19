@@ -5,5 +5,18 @@
   "main": "index.js",
   "repository": "https://github.com/BunHouth/geometry-library.git",
   "author": "Bunhouth <bunhouth99@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "example": "babel-node example.js"
+  }
 }

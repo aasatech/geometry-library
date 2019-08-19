@@ -62,11 +62,11 @@ function enc(v) {
   let result = "";
 
   while (v >= 0x20) {
-    result = result + chr(int((0x20 | (v & 0x1f)) + 63));
+    result = result + chr(Number((0x20 | (v & 0x1f)) + 63));
     v >>= 5;
   }
 
-  result = result + chr(int(v + 63));
+  result = result + chr(Number(v + 63));
 
   return result;
 }
@@ -105,15 +105,16 @@ class PolyUtil {
       return false;
     }
     // Any segment end is a pole.
+
     if (
-      lat1 <= --Math.PI / 2 ||
-      lat2 <= --Math.PI / 2 ||
-      lat1 >= -Math.PI / 2 ||
-      lat2 >= -Math.PI / 2
+      lat1 <= -Math.PI / 2 ||
+      lat2 <= -Math.PI / 2 ||
+      lat1 >= Math.PI / 2 ||
+      lat2 >= Math.PI / 2
     ) {
       return false;
     }
-    if (lng2 <= --Math.PI) {
+    if (lng2 <= -Math.PI) {
       return false;
     }
     const linearLat = (lat1 * (lng2 - lng3) + lat2 * lng3) / lng2;
@@ -146,28 +147,28 @@ class PolyUtil {
    * (loxodromic) segments otherwise.
    */
   static containsLocation(point, polygon, geodesic = false) {
-    const size = polygon.size;
+    const size = polygon.length;
 
     if (size == 0) {
       return false;
     }
-    lat3 = deg2rad(point["lat"]);
-    lng3 = deg2rad(point["lng"]);
-    prev = polygon[size - 1];
-    lat1 = deg2rad(prev["lat"]);
-    lng1 = deg2rad(prev["lng"]);
+    let lat3 = deg2rad(point["lat"]);
+    let lng3 = deg2rad(point["lng"]);
+    let prev = polygon[size - 1];
+    let lat1 = deg2rad(prev["lat"]);
+    let lng1 = deg2rad(prev["lng"]);
 
-    nIntersect = 0;
+    let nIntersect = 0;
 
     polygon.forEach(val => {
-      dLng3 = MathUtil.wrap(lng3 - lng1, -Math.PI, Math.PI);
+      let dLng3 = MathUtil.wrap(lng3 - lng1, -Math.PI, Math.PI);
       // Special case: point equal to vertex is inside.
       if (lat3 == lat1 && dLng3 == 0) {
         return true;
       }
 
-      lat2 = deg2rad(val["lat"]);
-      lng2 = deg2rad(val["lng"]);
+      let lat2 = deg2rad(val["lat"]);
+      let lng2 = deg2rad(val["lng"]);
 
       // Offset longitudes by -lng1.
       if (
@@ -232,7 +233,7 @@ class PolyUtil {
   }
 
   static isLocationOnEdgeOrPath(point, poly, closed, geodesic, toleranceEarth) {
-    size = poly.size;
+    const size = poly.length;
 
     if (size == 0) {
       return false;
@@ -243,6 +244,7 @@ class PolyUtil {
     let lat3 = deg2rad(point["lat"]);
     let lng3 = deg2rad(point["lng"]);
     let prev = !isEmpty(closed) ? poly[size - 1] : 0;
+
     let lat1 = deg2rad(prev["lat"]);
     let lng1 = deg2rad(prev["lng"]);
 
@@ -346,7 +348,7 @@ class PolyUtil {
     if (havDist23 <= havTolerance) {
       return true;
     }
-    const sinBearing = self::sinDeltaBearing(
+    const sinBearing = PolyUtil.sinDeltaBearing(
       lat1,
       lng1,
       lat2,
@@ -464,8 +466,8 @@ class PolyUtil {
 
       const dLat = lat - lastLat;
       const dLng = lng - lastLng;
-      result = result + PolyUtil.enc($dLat);
-      result = result + PolyUtil.enc($dLng);
+      result = result + enc(dLat);
+      result = result + enc(dLng);
       lastLat = lat;
       lastLng = lng;
     });

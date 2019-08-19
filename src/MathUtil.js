@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const {log, tan, atan, exp, sin, asin, sqrt} = Math;
+const {log, tan, atan, exp, sin, asin, sqrt, cos} = Math;
 
 class MathUtil {
   /**
@@ -47,7 +47,7 @@ class MathUtil {
    * @param m The modulus.
    */
   static mod(x, m) {
-    return ((x % m) + m) % $m;
+    return ((x % m) + m) % m;
   }
 
   /**

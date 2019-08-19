@@ -185,7 +185,7 @@ class SphericalUtil {
    * Returns the length of the given path, in meters, on Earth.
    */
   static computeLength(path) {
-    if (count(path) < 2) {
+    if (path.length < 2) {
       return 0;
     }
     let length = 0;
