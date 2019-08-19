@@ -237,13 +237,14 @@ Returns array
 
 const response = PolyUtil.decode('_p~iF~ps|U_ulLnnqC_mqNvxq`@');  
 
-  console.log(response); /**
+console.log(response);
+/**
   [ { lat: 38.5, lng: -120.2 },
     { lat: 40.7, lng: -120.95 },
     { lat: 43.252, lng: -126.45300000000002 }
   ]
 
-  */
+**/
 
 ```
 ---
@@ -309,7 +310,7 @@ console.log(response);
     'lat': 25.774316510639,
     'lng': -80.188685385944
   }
-*/
+**/
 
 ```
 ---
@@ -357,7 +358,7 @@ console.log(response);
       'lat': 26.647635362403,
       'lng': -82.253737943391
     }
-*/
+**/
 
 ```
 ---
@@ -438,6 +439,11 @@ console.log(response); //float 44766785529.143
 
 ```
 ---
+
+Credits
+-------
+[alexpechkarev](https://github.com/alexpechkarev/geometry-library)
+
 
 Support
 -------
