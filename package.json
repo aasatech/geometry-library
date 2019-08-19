@@ -1,6 +1,6 @@
 {
   "name": "node-geometry-library",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Javascript Geometry Library provides utility functions for the computation of geometric data on the surface of the Earth. Code ported from Google Maps Android API.",
   "main": "lib/index.js",
   "repository": "https://github.com/BunHouth/geometry-library.git",
@@ -16,5 +16,21 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src -d lib/ src",
     "example": "babel-node example.js"
-  }
+  },
+  "keywords": [
+    "google",
+    "maps",
+    "googlemaps",
+    "geo",
+    "geocode",
+    "timezone",
+    "api",
+    "client",
+    "roads",
+    "directions",
+    "navigation",
+    "geometry",
+    "polyutil",
+    "sphericalutil"
+  ]
 }
