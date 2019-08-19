@@ -1,8 +1,8 @@
 {
   "name": "node-geometry-library",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Javascript Geometry Library provides utility functions for the computation of geometric data on the surface of the Earth. Code ported from Google Maps Android API.",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "repository": "https://github.com/BunHouth/geometry-library.git",
   "author": "Bunhouth <bunhouth99@gmail.com>",
   "license": "MIT",
@@ -10,13 +10,11 @@
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "webpack": "^4.39.2",
-    "webpack-cli": "^3.3.7"
+    "@babel/preset-env": "^7.5.5"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
+    "build": "babel src -d lib/ src",
     "example": "babel-node example.js"
   }
 }

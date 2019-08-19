@@ -26,7 +26,7 @@ Usage
 
 Here is an example of using GeometryLibrary:
 ```
-import {SphericalUtil, PolyUtil} from "geometry-library";
+import {SphericalUtil, PolyUtil} from "node-geometry-library"";
 
 let response = SphericalUtil.computeHeading(
   {lat: 25.775, lng: -80.19}, // from object {lat, lng}
