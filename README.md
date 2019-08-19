@@ -14,7 +14,11 @@ Installation
 Issue following command:
 
 ```
-yarn add BunHouth/geometry-library
+yarn add node-geometry-library
+```
+
+```
+npm i node-geometry-library
 ```
 
 Usage
@@ -352,7 +356,7 @@ Returns array
 
 response =  SphericalUtil.interpolate({'lat': 25.775, 'lng': -80.190}, {'lat':26.215, 'lng': -81.218}, 2);
 
-console.log(response); 
+console.log(response);
 /*
     {
       'lat': 26.647635362403,

@@ -1,8 +1,8 @@
 {
-  "name": "geometry-library",
+  "name": "node-geometry-library",
   "version": "1.0.0",
   "description": "Javascript Geometry Library provides utility functions for the computation of geometric data on the surface of the Earth. Code ported from Google Maps Android API.",
-  "main": "index.js",
+  "main": "src/index.js",
   "repository": "https://github.com/BunHouth/geometry-library.git",
   "author": "Bunhouth <bunhouth99@gmail.com>",
   "license": "MIT",
