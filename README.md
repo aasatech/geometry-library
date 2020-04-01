@@ -66,7 +66,7 @@ let response =   PolyUtil.isLocationOnPath(
   ]
 );
 
-console.log(response) // false  
+console.log(response) // true  
 
 let response =  PolyUtil.containsLocation(
   {lat: 23.886, lng: -65.269}, // point object {lat, lng}
