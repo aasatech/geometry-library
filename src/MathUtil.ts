@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const {log, tan, atan, exp, sin, asin, sqrt, cos} = Math;
+const {log, tan, atan, exp, sin, asin, sqrt, cos, PI} = Math;
 
 class MathUtil {
   /**
@@ -27,7 +27,7 @@ class MathUtil {
   /**
    * Restrict x to the range [low, high].
    */
-  static clamp(x, low, high) {
+  static clamp(x: number, low: number, high: number) {
     return x < low ? low : x > high ? high : x;
   }
 
@@ -37,7 +37,7 @@ class MathUtil {
    * @param min The minimum.
    * @param max The maximum.
    */
-  static wrap(n, min, max) {
+  static wrap(n: number, min: number, max: number) {
     return n >= min && n < max ? n : MathUtil.mod(n - min, max - min) + min;
   }
 
@@ -46,7 +46,7 @@ class MathUtil {
    * @param x The operand.
    * @param m The modulus.
    */
-  static mod(x, m) {
+  static mod(x: number, m: number) {
     return ((x % m) + m) % m;
   }
 
@@ -54,22 +54,22 @@ class MathUtil {
    * Returns mercator Y corresponding to latitude.
    * See http://en.wikipedia.org/wiki/Mercator_projection .
    */
-  static mercator(lat) {
-    return log(tan(lat * 0.5 + M_PI / 4));
+  static mercator(lat: number) {
+    return log(tan(lat * 0.5 + PI / 4));
   }
 
   /**
    * Returns latitude from mercator Y.
    */
-  static inverseMercator(y) {
-    return 2 * atan(exp(y)) - M_PI / 2;
+  static inverseMercator(y: number) {
+    return 2 * atan(exp(y)) - PI / 2;
   }
 
   /**
    * Returns haversine(angle-in-radians).
    * hav(x) == (1 - cos(x)) / 2 == sin(x / 2)^2.
    */
-  static hav(x) {
+  static hav(x: number) {
     const sinHalf = sin(x * 0.5);
     return sinHalf * sinHalf;
   }
@@ -79,22 +79,22 @@ class MathUtil {
    * arcHav(x) == acos(1 - 2 * x) == 2 * asin(sqrt(x)).
    * The argument must be in [0, 1], and the result is positive.
    */
-  static arcHav(x) {
+  static arcHav(x: number) {
     return 2 * asin(sqrt(x));
   }
 
   // Given h==hav(x), returns sin(abs(x)).
-  static sinFromHav(h) {
+  static sinFromHav(h: number) {
     return 2 * sqrt(h * (1 - h));
   }
 
   // Returns hav(asin(x)).
-  static havFromSin(x) {
+  static havFromSin(x: number) {
     const x2 = x * x;
     return (x2 / (1 + sqrt(1 - x2))) * 0.5;
   }
   // Returns sin(arcHav(x) + arcHav(y)).
-  static sinSumFromHav(x, y) {
+  static sinSumFromHav(x: number, y: number) {
     const a = sqrt(x * (1 - x));
     const b = sqrt(y * (1 - y));
     return 2 * (a + b - 2 * (a * y + b * x));
@@ -102,7 +102,7 @@ class MathUtil {
   /**
    * Returns hav() of distance from (lat1, lng1) to (lat2, lng2) on the unit sphere.
    */
-  static havDistance(lat1, lat2, dLng) {
+  static havDistance(lat1: number, lat2: number, dLng: number) {
     return (
       MathUtil.hav(lat1 - lat2) + MathUtil.hav(dLng) * cos(lat1) * cos(lat2)
     );

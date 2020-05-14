@@ -17,13 +17,18 @@
 
 import MathUtil from "./MathUtil";
 
-const {log, atan, atan2, cos, sin, asin, sqrt, abs} = Math;
+const {tan, atan2, cos, sin, asin, sqrt, abs} = Math;
 
-export function deg2rad(degrees) {
+export type Path = {
+  lat: number,
+  lng: number
+}
+
+export function deg2rad(degrees: number) {
   return degrees * (Math.PI / 180);
 }
 
-export function rad2deg(radians) {
+export function rad2deg(radians: number) {
   return radians * (180 / Math.PI);
 }
 
@@ -33,7 +38,7 @@ class SphericalUtil {
    * expressed in degrees clockwise from North within the range [-180,180).
    * @return The heading in degrees clockwise from north.
    */
-  static computeHeading(from, to) {
+  static computeHeading(from: Path, to: Path) {
     // http://williams.best.vwh.net/avform.htm#Crs
     const fromLat = deg2rad(from["lat"]);
     const fromLng = deg2rad(from["lng"]);
@@ -55,7 +60,7 @@ class SphericalUtil {
    * @param distance The distance to travel.
    * @param heading  The heading in degrees clockwise from north.
    */
-  static computeOffset(from, distance, heading) {
+  static computeOffset(from: Path, distance: number, heading: number) {
     distance /= MathUtil.EARTH_RADIUS;
     heading = deg2rad(heading);
     // http://williams.best.vwh.net/avform.htm#LL
@@ -84,7 +89,7 @@ class SphericalUtil {
    * @param distance The distance travelled, in meters.
    * @param heading  The heading in degrees clockwise from north.
    */
-  static computeOffsetOrigin(to, distance, heading) {
+  static computeOffsetOrigin(to: Path, distance: number, heading: number) {
     heading = deg2rad(heading);
     distance /= MathUtil.EARTH_RADIUS;
     // http://lists.maptools.org/pipermail/proj/2008-October/003939.html
@@ -128,7 +133,7 @@ class SphericalUtil {
    * @param fraction A fraction of the distance to travel.
    * @return The interpolated LatLng.
    */
-  static interpolate(from, to, fraction) {
+  static interpolate(from: Path, to: Path, fraction: number) {
     // http://en.wikipedia.org/wiki/Slerp
     const fromLat = deg2rad(from["lat"]);
     const fromLng = deg2rad(from["lng"]);
@@ -157,7 +162,7 @@ class SphericalUtil {
   /**
    * Returns distance on the unit sphere; the arguments are in radians.
    */
-  static distanceRadians(lat1, lng1, lat2, lng2) {
+  static distanceRadians(lat1: number, lng1: number, lat2: number, lng2: number) {
     return MathUtil.arcHav(MathUtil.havDistance(lat1, lat2, lng1 - lng2));
   }
 
@@ -165,7 +170,7 @@ class SphericalUtil {
    * Returns the angle between two LatLngs, in radians. This is the same as the distance
    * on the unit sphere.
    */
-  static computeAngleBetween(from, to) {
+  static computeAngleBetween(from: Path, to: Path) {
     return SphericalUtil.distanceRadians(
       deg2rad(from["lat"]),
       deg2rad(from["lng"]),
@@ -177,14 +182,14 @@ class SphericalUtil {
   /**
    * Returns the distance between two LatLngs, in meters.
    */
-  static computeDistanceBetween(from, to) {
+  static computeDistanceBetween(from: Path, to: Path) {
     return SphericalUtil.computeAngleBetween(from, to) * MathUtil.EARTH_RADIUS;
   }
 
   /**
    * Returns the length of the given path, in meters, on Earth.
    */
-  static computeLength(path) {
+  static computeLength(path: Path[]) {
     if (path.length < 2) {
       return 0;
     }
@@ -207,7 +212,7 @@ class SphericalUtil {
    * @param path A closed path.
    * @return The path's area in square meters.
    */
-  static computeArea(path) {
+  static computeArea(path: Path[]) {
     return abs(SphericalUtil.computeSignedArea(path));
   }
 
@@ -218,7 +223,7 @@ class SphericalUtil {
    * @param path A closed path.
    * @return The loop's area in square meters.
    */
-  static computeSignedArea(path) {
+  static computeSignedArea(path: Path[]) {
     return SphericalUtil.computeSignedAreaP(path, MathUtil.EARTH_RADIUS);
   }
 
@@ -227,7 +232,7 @@ class SphericalUtil {
    * The computed area uses the same units as the radius squared.
    * Used by SphericalUtilTest.
    */
-  static computeSignedAreaP(path, radius) {
+  static computeSignedAreaP(path: Path[], radius: number) {
     const size = path.length;
     if (size < 3) {
       return 0;
@@ -260,7 +265,7 @@ class SphericalUtil {
    * See http://books.google.com/books?id=3uBHAAAAIAAJ&pg=PA71
    * The arguments named "tan" are tan((pi/2 - latitude)/2).
    */
-  static polarTriangleArea(tan1, lng1, tan2, lng2) {
+  static polarTriangleArea(tan1: number, lng1: number, tan2: number, lng2: number) {
     const deltaLng = lng1 - lng2;
     const t = tan1 * tan2;
     return 2 * atan2(t * sin(deltaLng), 1 + t * cos(deltaLng));
