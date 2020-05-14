@@ -21,7 +21,6 @@ import SphericalUtil, {deg2rad, Path} from "./SphericalUtil";
 
 const {max, min, tan, cos, sin, sqrt, round} = Math;
 const DEFAULT_TOLERANCE = 0.1; // meters.
-export type Opaque<K, T> = T & { __TYPE__: K };
 function ord(str: string) {
   return str.charCodeAt(0);
 }
@@ -47,15 +46,6 @@ function hexdec(hexString: any): number {
       ? (hexString = hexString - 0x00000000)
       : (hexString = hexString - 0xffffffff - 1);
   return parseInt(hexString, 10);
-}
-
-function isEmpty(value: string | object) {
-  return (
-    value === undefined ||
-    value === null ||
-    (typeof value === "object" && Object.keys(value).length === 0) ||
-    (typeof value === "string" && value.trim().length === 0)
-  );
 }
 
 function enc(v: number) {
@@ -163,7 +153,8 @@ class PolyUtil {
     let lng1 = deg2rad(prev["lng"]);
 
     let nIntersect = 0;
-
+    
+    // @ts-ignore
     polygon.forEach(val => {
       let dLng3 = MathUtil.wrap(lng3 - lng1, -Math.PI, Math.PI);
       // Special case: point equal to vertex is inside.
@@ -247,8 +238,11 @@ class PolyUtil {
     let lat3 = deg2rad(point["lat"]);
     let lng3 = deg2rad(point["lng"]);
     let prev = closed ? poly[size - 1] : 0;
-    let lat1 = deg2rad(prev["lat"]);
-    let lng1 = deg2rad(prev["lng"]);
+    
+    // @ts-ignore
+    let lat1 = deg2rad(prev ? prev['lat'] : 0);
+    // @ts-ignore
+    let lng1 = deg2rad(prev ? prev['lng'] : 0);
 
     if (geodesic) {
       for (let i in poly) {

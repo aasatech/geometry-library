@@ -11,6 +11,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
+    "declaration": true,
     "baseUrl": "./",
     "paths": {
       "*": ["src/*", "node_modules/*"]
