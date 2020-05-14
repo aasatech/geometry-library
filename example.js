@@ -1,4 +1,4 @@
-import {SphericalUtil, PolyUtil} from "./src";
+import {SphericalUtil, PolyUtil} from "./lib";
 
 const example1 = SphericalUtil.computeHeading(
   {lat: 25.775, lng: -80.19}, // from array [lat, lng]
