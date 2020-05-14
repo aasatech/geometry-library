@@ -17,15 +17,15 @@
  */
 
 import MathUtil from "./MathUtil";
-import SphericalUtil, {deg2rad} from "./SphericalUtil";
+import SphericalUtil, {deg2rad, Path} from "./SphericalUtil";
 
-const {log, atan, atan2, cos, sin, asin, sqrt, abs, round} = Math;
+const {max, min, tan, cos, sin, sqrt, round} = Math;
 const DEFAULT_TOLERANCE = 0.1; // meters.
-function ord(str) {
+function ord(str: string) {
   return str.charCodeAt(0);
 }
 
-function chr(codePt) {
+function chr(codePt: number) {
   if (codePt > 0xffff) {
     codePt -= 0x10000;
     return String.fromCharCode(
@@ -36,7 +36,7 @@ function chr(codePt) {
   return String.fromCharCode(codePt);
 }
 
-function hexdec(hexString) {
+function hexdec(hexString: any): number {
   hexString =
     hexString.charAt(1) != "X" && hexString.charAt(1) != "x"
       ? (hexString = "0X" + hexString)
@@ -48,16 +48,7 @@ function hexdec(hexString) {
   return parseInt(hexString, 10);
 }
 
-function isEmpty(value) {
-  return (
-    value === undefined ||
-    value === null ||
-    (typeof value === "object" && Object.keys(value).length === 0) ||
-    (typeof value === "string" && value.trim().length === 0)
-  );
-}
-
-function enc(v) {
+function enc(v: number) {
   v = v < 0 ? ~(v << 1) : v << 1;
   let result = "";
 
@@ -78,14 +69,14 @@ class PolyUtil {
    * Returns tan(latitude-at-lng3) on the great circle (lat1, lng1) to (lat2, lng2). lng1==0.
    * See http://williams.best.vwh.net/avform.htm .
    */
-  static tanLatGC(lat1, lat2, lng2, lng3) {
+  static tanLatGC(lat1: number, lat2: number, lng2: number, lng3: number) {
     return (tan(lat1) * sin(lng2 - lng3) + tan(lat2) * sin(lng3)) / sin(lng2);
   }
 
   /**
    * Returns mercator(latitude-at-lng3) on the Rhumb line (lat1, lng1) to (lat2, lng2). lng1==0.
    */
-  static mercatorLatRhumb(lat1, lat2, lng2, lng3) {
+  static mercatorLatRhumb(lat1: number, lat2: number, lng2: number, lng3: number): number {
     return (
       (MathUtil.mercator(lat1) * (lng2 - lng3) +
         MathUtil.mercator(lat2) * lng3) /
@@ -98,7 +89,7 @@ class PolyUtil {
    * (lat1, lng1) to (lat2, lng2).
    * Longitudes are offset by -lng1; the implicit lng1 becomes 0.
    */
-  static intersects(lat1, lat2, lng2, lat3, lng3, geodesic) {
+  static intersects(lat1: number, lat2: number, lng2: number, lat3: number, lng3: number, geodesic: boolean) : boolean{
     // Both ends on the same side of lng3.
     if ((lng3 >= 0 && lng3 >= lng2) || (lng3 < 0 && lng3 < lng2)) {
       return false;
@@ -149,7 +140,7 @@ class PolyUtil {
    * The polygon is formed of great circle segments if geodesic is true, and of rhumb
    * (loxodromic) segments otherwise.
    */
-  static containsLocation(point, polygon, geodesic = false) {
+  static containsLocation(point: Path, polygon: Path[], geodesic: boolean = false): boolean {
     const size = polygon.length;
 
     if (size == 0) {
@@ -162,7 +153,8 @@ class PolyUtil {
     let lng1 = deg2rad(prev["lng"]);
 
     let nIntersect = 0;
-
+    
+    // @ts-ignore
     polygon.forEach(val => {
       let dLng3 = MathUtil.wrap(lng3 - lng1, -Math.PI, Math.PI);
       // Special case: point equal to vertex is inside.
@@ -199,10 +191,10 @@ class PolyUtil {
    * closing segment between the first point and the last point is included.
    */
   static isLocationOnEdge(
-    point,
-    polygon,
-    tolerance = DEFAULT_TOLERANCE,
-    geodesic = true
+    point: Path,
+    polygon: Path[],
+    tolerance: number = DEFAULT_TOLERANCE,
+    geodesic: boolean = true
   ) {
     return PolyUtil.isLocationOnEdgeOrPath(
       point,
@@ -221,8 +213,8 @@ class PolyUtil {
    */
 
   static isLocationOnPath(
-    point,
-    polyline,
+    point: Path,
+    polyline: Path[],
     tolerance = DEFAULT_TOLERANCE,
     geodesic = true
   ) {
@@ -235,7 +227,7 @@ class PolyUtil {
     );
   }
 
-  static isLocationOnEdgeOrPath(point, poly, closed, geodesic, toleranceEarth) {
+  static isLocationOnEdgeOrPath(point: Path, poly: Path[], closed: boolean, geodesic: any, toleranceEarth: number) {
     const size = poly.length;
 
     if (size == 0) {
@@ -245,9 +237,12 @@ class PolyUtil {
     let havTolerance = MathUtil.hav(tolerance);
     let lat3 = deg2rad(point["lat"]);
     let lng3 = deg2rad(point["lng"]);
-    let prev = !isEmpty(closed) ? poly[size - 1] : 0;
-    let lat1 = deg2rad(prev["lat"]);
-    let lng1 = deg2rad(prev["lng"]);
+    let prev = closed ? poly[size - 1] : 0;
+    
+    // @ts-ignore
+    let lat1 = deg2rad(prev ? prev['lat'] : 0);
+    // @ts-ignore
+    let lng1 = deg2rad(prev ? prev['lng'] : 0);
 
     if (geodesic) {
       for (let i in poly) {
@@ -328,7 +323,7 @@ class PolyUtil {
    * Returns sin(initial bearing from (lat1,lng1) to (lat3,lng3) minus initial bearing
    * from (lat1, lng1) to (lat2,lng2)).
    */
-  static sinDeltaBearing(lat1, lng1, lat2, lng2, lat3, lng3) {
+  static sinDeltaBearing(lat1: number, lng1: number, lat2: number, lng2: number, lat3: number, lng3: number): number {
     const sinLat1 = sin(lat1);
     const cosLat2 = cos(lat2);
     const cosLat3 = cos(lat3);
@@ -344,7 +339,7 @@ class PolyUtil {
     return denom <= 0 ? 1 : (a * d - b * c) / sqrt(denom);
   }
 
-  static isOnSegmentGC(lat1, lng1, lat2, lng2, lat3, lng3, havTolerance) {
+  static isOnSegmentGC(lat1: number, lng1: number, lat2: number, lng2: number, lat3: number, lng3: number, havTolerance: number): boolean {
     const havDist13 = MathUtil.havDistance(lat1, lat3, lng1 - lng3);
     if (havDist13 <= havTolerance) {
       return true;
@@ -434,7 +429,7 @@ class PolyUtil {
    * @return the distance in meters (assuming spherical earth)
    */
 
-  static distanceToLine(p, start, end) {
+  static distanceToLine(p: Path, start: Path, end: Path) {
     if (start == end) {
       return SphericalUtil.computeDistanceBetween(end, p);
     }
@@ -466,7 +461,7 @@ class PolyUtil {
   /**
    * Decodes an encoded path string into a sequence of LatLngs.
    */
-  static decode(encodedPath) {
+  static decode(encodedPath: string) {
     const len = encodedPath.length - 1;
     // For speed we preallocate to an upper bound on the final length, then
     // truncate the array before returning.
@@ -502,7 +497,7 @@ class PolyUtil {
   /**
    * Encodes a sequence of LatLngs into an encoded path string.
    */
-  static encode(path) {
+  static encode(path: Path[]) {
     let lastLat = 0;
     let lastLng = 0;
     let result = "";
