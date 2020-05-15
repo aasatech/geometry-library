@@ -1,4 +1,5 @@
-import {SphericalUtil, PolyUtil} from "./lib";
+const SphericalUtil = require('./lib/SphericalUtil').default
+const PolyUtil = require('./lib/PolyUtil').default
 
 const example1 = SphericalUtil.computeHeading(
   {lat: 25.775, lng: -80.19}, // from array [lat, lng]
