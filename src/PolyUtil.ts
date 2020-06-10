@@ -19,48 +19,31 @@
 import MathUtil from "./MathUtil";
 import SphericalUtil, {deg2rad, Path} from "./SphericalUtil";
 
-const {max, min, tan, cos, sin, sqrt, round} = Math;
+const {max, min, tan, cos, sin, sqrt} = Math;
 const DEFAULT_TOLERANCE = 0.1; // meters.
-function ord(str: string) {
-  return str.charCodeAt(0);
+
+function py2_round(value: number) {
+  // Google's polyline algorithm uses the same rounding strategy as Python 2, which is different from JS for negative values
+  return Math.floor(Math.abs(value) + 0.5) * (value >= 0 ? 1 : -1);
 }
 
-function chr(codePt: number) {
-  if (codePt > 0xffff) {
-    codePt -= 0x10000;
-    return String.fromCharCode(
-      0xd800 + (codePt >> 10),
-      0xdc00 + (codePt & 0x3ff)
-    );
+function encode(current: number, previous: number, factor: number) {
+  current = py2_round(current * factor);
+  previous = py2_round(previous * factor);
+  let coordinate = current - previous;
+  coordinate <<= 1;
+  if (current - previous < 0) {
+      coordinate = ~coordinate;
   }
-  return String.fromCharCode(codePt);
-}
-
-function hexdec(hexString: any): number {
-  hexString =
-    hexString.charAt(1) != "X" && hexString.charAt(1) != "x"
-      ? (hexString = "0X" + hexString)
-      : hexString;
-  hexString =
-    hexString.charAt(2) < 8
-      ? (hexString = hexString - 0x00000000)
-      : (hexString = hexString - 0xffffffff - 1);
-  return parseInt(hexString, 10);
-}
-
-function enc(v: number) {
-  v = v < 0 ? ~(v << 1) : v << 1;
-  let result = "";
-
-  while (v >= 0x20) {
-    result = result + chr(Number((0x20 | (v & 0x1f)) + 63));
-    v >>= 5;
+  let output = '';
+  while (coordinate >= 0x20) {
+      output += String.fromCharCode((0x20 | (coordinate & 0x1f)) + 63);
+      coordinate >>= 5;
   }
-
-  result = result + chr(Number(v + 63));
-
-  return result;
+  output += String.fromCharCode(coordinate + 63);
+  return output;
 }
+
 class PolyUtil {
   static get DEFAULT_TOLERANCE() {
     return DEFAULT_TOLERANCE;
@@ -457,58 +440,68 @@ class PolyUtil {
   /**
    * Decodes an encoded path string into a sequence of LatLngs.
    */
-  static decode(encodedPath: string) {
-    const len = encodedPath.length - 1;
-    // For speed we preallocate to an upper bound on the final length, then
-    // truncate the array before returning.
-    let path = [];
-    let index = 0;
-    let lat = 0;
-    let lng = 0;
-    while (index < len) {
-      let result = 1;
-      let shift = 0;
-      let b;
-      do {
-        b = ord(encodedPath[index++]) - 63 - 1;
-        result += b << shift;
-        shift += 5;
-      } while (b >= hexdec("0x1f"));
+  static decode(encodedPath: string, precision: number = 5) {
+    var index = 0,
+        lat = 0,
+        lng = 0,
+        coordinates = [],
+        shift = 0,
+        result = 0,
+        byte = null,
+        latitude_change,
+        longitude_change,
+        factor = Math.pow(10, Number.isInteger(precision) ? precision : 5);
 
-      lat += (result & 1) != 0 ? ~(result >> 1) : result >> 1;
-      result = 1;
-      shift = 0;
-      do {
-        b = ord(encodedPath[index++]) - 63 - 1;
-        result += b << shift;
-        shift += 5;
-      } while (b >= hexdec("0x1f"));
-      lng += (result & 1) != 0 ? ~(result >> 1) : result >> 1;
+    // Coordinates have variable length when encoded, so just keep
+    // track of whether we've hit the end of the string. In each
+    // loop iteration, a single coordinate is decoded.
+    while (index < encodedPath.length) {
+        // Reset shift, result, and byte
+        byte = null;
+        shift = 0;
+        result = 0;
 
-      path.push({lat: lat * 1e-5, lng: lng * 1e-5});
+        do {
+            byte = encodedPath.charCodeAt(index++) - 63;
+            result |= (byte & 0x1f) << shift;
+            shift += 5;
+        } while (byte >= 0x20);
+
+        latitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
+
+        shift = result = 0;
+
+        do {
+            byte = encodedPath.charCodeAt(index++) - 63;
+            result |= (byte & 0x1f) << shift;
+            shift += 5;
+        } while (byte >= 0x20);
+
+        longitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
+
+        lat += latitude_change;
+        lng += longitude_change;
+        
+        coordinates.push({lat: lat / factor, lng: lng / factor});
     }
-    return path;
+
+    return coordinates;
   }
 
   /**
    * Encodes a sequence of LatLngs into an encoded path string.
    */
-  static encode(path: Path[]) {
-    let lastLat = 0;
-    let lastLng = 0;
-    let result = "";
-    path.forEach(point => {
-      const lat = round(point["lat"] * 1e5);
-      const lng = round(point["lng"] * 1e5);
+  static encode(path: Path[], precision: number = 5) {
+    var factor = Math.pow(10, Number.isInteger(precision) ? precision : 5),
+        output = encode(path[0].lat, 0, factor) + encode(path[0].lng, 0, factor);
 
-      const dLat = lat - lastLat;
-      const dLng = lng - lastLng;
-      result = result + enc(dLat);
-      result = result + enc(dLng);
-      lastLat = lat;
-      lastLng = lng;
-    });
-    return result;
+    for (var i = 1; i < path.length; i++) {
+      var a = path[i], b = path[i - 1];
+        output += encode(a.lat, b.lat, factor);
+        output += encode(a.lng, b.lng, factor);
+    }
+  
+    return output;
   }
 }
 

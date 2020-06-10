@@ -101,7 +101,7 @@ let response =  PolyUtil.decode('_p~iF~ps|U_ulLnnqC_mqNvxq`@');
 console.log(response) /**
   [ { lat: 38.5, lng: -120.2 },
     { lat: 40.7, lng: -120.95 },
-    { lat: 43.252, lng: -126.45300000000002 }
+    { lat: 43.252, lng: -126.453 }
   ]
 
   */
@@ -245,7 +245,7 @@ console.log(response);
 /*
   [ { lat: 38.5, lng: -120.2 },
     { lat: 40.7, lng: -120.95 },
-    { lat: 43.252, lng: -126.45300000000002 }
+    { lat: 43.252, lng: -126.453 }
   ]
 
 */

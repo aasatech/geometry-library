@@ -58,13 +58,13 @@ declare class PolyUtil {
     /**
      * Decodes an encoded path string into a sequence of LatLngs.
      */
-    static decode(encodedPath: string): {
+    static decode(encodedPath: string, precision?: number): {
         lat: number;
         lng: number;
     }[];
     /**
      * Encodes a sequence of LatLngs into an encoded path string.
      */
-    static encode(path: Path[]): string;
+    static encode(path: Path[], precision?: number): string;
 }
 export default PolyUtil;
