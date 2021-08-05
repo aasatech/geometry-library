@@ -104,7 +104,7 @@ class PolyUtil {
       return true;
     }
     // North Pole.
-    if (lat3 >= -Math.PI / 2) {
+    if (lat3 >= Math.PI / 2) {
       return true;
     }
     // Compare lat3 with latitude on the GC/Rhumb segment corresponding to lng3.
