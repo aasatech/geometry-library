@@ -138,7 +138,8 @@ class PolyUtil {
     let nIntersect = 0;
     
     // @ts-ignore
-    polygon.forEach(val => {
+    for (let index in polygon) { 
+      const val = polygon[index];
       let dLng3 = MathUtil.wrap(lng3 - lng1, -Math.PI, Math.PI);
       // Special case: point equal to vertex is inside.
       if (lat3 == lat1 && dLng3 == 0) {
@@ -163,7 +164,8 @@ class PolyUtil {
       }
       lat1 = lat2;
       lng1 = lng2;
-    });
+    }
+
     return (nIntersect & 1) != 0;
   }
 
